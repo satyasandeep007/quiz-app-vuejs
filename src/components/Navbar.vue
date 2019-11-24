@@ -3,7 +3,7 @@
     <div>
       <nav class="nav justify-content-center">
         <b-nav-item disabled><b><h1>Quiz App
-              <span class="badge badge-secondary">Counter: 4/10</span></h1></b>
+              <span class="badge badge-secondary">Counter:  {{ numCorrect }}/{{ numTotal }}</span></h1></b>
         </b-nav-item>
       </nav>
     </div>
@@ -12,8 +12,12 @@
 
 <script>
 export default {
-  name: "#navbar"
-};
+  props: [
+    'numCorrect',
+    'numTotal'
+  ]
+}
+
 </script>
 
 <style scoped></style>

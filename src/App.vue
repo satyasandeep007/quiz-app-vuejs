@@ -1,13 +1,17 @@
  <template>
   <div id="app">
-    <Navbar />
+    <Navbar
+    :numCorrect="numCorrect"
+      :numTotal="numTotal" />
     <b-container class="bv-example-row">
       <b-row>
       <b-col sm="8" offset="2">
         <Questions 
+        v-if="questions.length"
         v-bind:currentQuestion="questions[index]"
         v-bind:next="next"
-        v-bind:prev="prev" />
+        v-bind:prev="prev"
+        v-bind:increment="increment" />
       </b-col>
       </b-row>
     </b-container>
@@ -26,7 +30,9 @@ export default {
   data() {
     return {
       questions : [],
-      index : 0
+      index : 0,
+      numCorrect: 0,
+      numTotal: 0
     };
   },
   mounted () {
@@ -46,7 +52,13 @@ export default {
      prev() {
       this.index--
     },
-  },
+    increment(isCorrect) {
+      if (isCorrect) {
+        this.numCorrect++
+      }
+      this.numTotal++
+    }
+  }
 };
 </script>
  

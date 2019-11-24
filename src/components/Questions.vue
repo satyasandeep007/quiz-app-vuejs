@@ -1,42 +1,126 @@
  <template>
   <div id="questions">
     <div class="jumbotron">
+      <div style="height:100px;">
+        <p class="lead">
+          <b>{{currentQuestion.question}}</b>
+        </p>
+      </div>
 
-      <p class="lead"><b>{{currentQuestion.question}}</b></p>
       <hr class="my-4" />
-      <p>Answers</p>
+      <p>Answers :</p>
+      <b-list-group>
+        <b-list-group-item
+          v-for="(answer,index) in shuffledAnswers"
+          :key="index"
+          @click.prevent="selectAnswer(index)"
+          :class="answerClass(index)"
+        >
+          <ul>
+            <li>{{ answer }}</li>
+          </ul>
+        </b-list-group-item>
+      </b-list-group>
+
       <div>
         <button @click="prev" type="button" class="btn btn-outline-primary">Prev</button>
-        <button type="button" class="btn btn-outline-success">Submit</button>
+        <button
+          @click="submitAnswer"
+          :disabled="selectedIndex === null || answered"
+          type="button"
+          class="btn btn-outline-success"
+        >Submit</button>
         <button @click="next" type="button" class="btn btn-outline-primary">Next</button>
       </div>
     </div>
   </div>
 </template>
  
-  <script>
+<script>
+import _ from "lodash";
 export default {
-  props: {
-    currentQuestion : Object,
-    next : Function,
-    prev : Function
-  },
   name: "#questions",
+  props: {
+    currentQuestion: Object,
+    next: Function,
+    prev: Function
+  },
   data() {
     return {
-      count: 0
+      selectedIndex: null,
+      correctIndex: null,
+      shuffledAnswers: [],
+      answered: false
     };
   },
+  computed: {
+    answers() {
+      let answers = [...this.currentQuestion.incorrect_answers];
+      answers.push(this.currentQuestion.correct_answer);
+      return answers;
+    }
+  },
+  watch: {
+    currentQuestion: {
+      immediate: true,
+      handler() {
+        this.selectedIndex = null;
+        this.answered = false;
+        this.shuffleAnswers();
+      }
+    }
+  },
   methods: {
-    
-    method2() {}
+    selectAnswer(index) {
+      this.selectedIndex = index;
+    },
+    submitAnswer() {
+      let isCorrect = false;
+      if (this.selectedIndex === this.correctIndex) {
+        isCorrect = true;
+      }
+      this.answered = true;
+      this.increment(isCorrect);
+    },
+    shuffleAnswers() {
+      let answers = [
+        ...this.currentQuestion.incorrect_answers,
+        this.currentQuestion.correct_answer];
+      this.shuffledAnswers = _.shuffle(answers);
+      this.correctIndex = this.shuffledAnswers.indexOf(
+        this.currentQuestion.correct_answer)
+    },
+    answerClass(index) {
+      let answerClass = "";
+      if (!this.answered && this.selectedIndex === index) {
+        answerClass = "selected";
+      } else if (this.answered && this.correctIndex === index) {
+        answerClass = "correct";
+      } else if (
+        this.answered &&
+        this.selectedIndex === index &&
+        this.correctIndex !== index
+      ) {
+        answerClass = "incorrect";
+      }
+      return answerClass;
+    }
   }
 };
 </script>
 
 <style scoped>
-#questions {
-  justify-content: center;
-  align-content: center;
+.b-list-group-item:hover {
+  background-color: #eeeeee;
+  cursor: pointer;
+}
+.selected {
+  background-color: yellow;
+}
+.correct {
+  background-color: green;
+}
+.incorrect {
+  background-color: red;
 }
 </style> 
