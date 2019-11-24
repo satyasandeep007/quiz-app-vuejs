@@ -1,14 +1,15 @@
  <template>
   <div id="questions">
     <div class="jumbotron">
-      <div style="height:100px;">
+      <div style="height:50px;">
         <p class="lead">
           <b>{{currentQuestion.question}}</b>
         </p>
       </div>
-
       <hr class="my-4" />
-      <p>Answers :</p>
+      <h4>
+        <span class="badge badge-primary">Answers :</span>
+      </h4>
       <b-list-group>
         <b-list-group-item
           v-for="(answer,index) in shuffledAnswers"
@@ -22,7 +23,7 @@
         </b-list-group-item>
       </b-list-group>
 
-      <div>
+      <div class="btn-group">
         <button @click="prev" type="button" class="btn btn-outline-primary">Prev</button>
         <button
           @click="submitAnswer"
@@ -85,10 +86,12 @@ export default {
     shuffleAnswers() {
       let answers = [
         ...this.currentQuestion.incorrect_answers,
-        this.currentQuestion.correct_answer];
+        this.currentQuestion.correct_answer
+      ];
       this.shuffledAnswers = _.shuffle(answers);
       this.correctIndex = this.shuffledAnswers.indexOf(
-        this.currentQuestion.correct_answer)
+        this.currentQuestion.correct_answer
+      );
     },
     answerClass(index) {
       let answerClass = "";
@@ -115,12 +118,18 @@ export default {
   cursor: pointer;
 }
 .selected {
-  background-color: yellow;
+  background-color: lightblue;
 }
 .correct {
   background-color: green;
 }
 .incorrect {
   background-color: red;
+}
+.btn-group {
+  margin-top: 20px;
+}
+.jumbotron {
+  margin-top: 30px;
 }
 </style> 
